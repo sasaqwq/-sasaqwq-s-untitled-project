@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вільний простір</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/4/49/Flag_of_Ukraine.svg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+
+    /* Навігаційна панель */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 15px 30px;
+      box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .navbar .menu a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-right: 20px;
+      font-size: 18px;
+    }
+
+    .navbar .menu a:hover {
+      color: #ffdd00;
+    }
+
+    .lang-buttons button {
+      background-color: #ffdd00;
+      border: none;
+      color: #000;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .lang-buttons button:hover {
+      background-color: #e6c300;
+      transform: translateY(-3px);
+    }
+
+    /* Основний контент */
+    .content-section {
+      display: none;
+      padding: 30px;
+      margin: 20px auto;
+      max-width: 800px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .content-section h1, .content-section h2 {
+      color: #ffdd00;
+    }
+
+    /* Питання та Відповіді */
+    .faq-item {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      position: relative;
+      text-align: left;
+      box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .faq-item:hover {
+      background-color: rgba(255, 255, 0, 0.2);
+    }
+
+    .faq-item::after {
+      content: '▼';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #ffdd00;
+    }
+
+    .faq-item.active::after {
+      content: '▲';
+    }
+
+    .faq-answer {
+      display: none;
+      padding: 10px;
+      margin-top: 5px;
+      background: rgba(0, 0, 0, 0.9);
+      border-radius: 5px;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .faq-item.active .faq-answer {
+      display: block;
+    }
+
+    /* Модальне вікно */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+    }
+
+    .modal input[type="password"] {
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      width: 80%;
+    }
+
+    .modal button {
+      background-color: #ffdd00;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .modal button:hover {
+      background-color: #e6c300;
+    }
+
+    .moder-panel ul {
+      list-style: none;
+      padding: 0;
+      color: #fff;
+    }
+
+    .moder-panel li {
+      padding: 10px;
+      margin: 10px 0;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      text-align: left;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .moder-panel li:hover {
+      background: rgba(255, 255, 0, 0.2);
+    }
+  </style>
+  <script>
+    const content = {
+      uk: {
+        mainTitle: "Вільний простір",
+        faqTitle: "Питання та Відповіді",
+        moderTitle: "MODER",
+      },
+      en: {
+        mainTitle: "Free Space",
+        faqTitle: "FAQ",
+        moderTitle: "MODER",
+      }
+    };
+
+    function switchLanguage(lang) {
+      document.querySelectorAll('[data-lang-key]').forEach(el => {
+        el.textContent = content[lang][el.dataset.langKey];
+      });
+    }
+
+    function showSection(sectionId) {
+      document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+    }
+
+    function toggleFAQ(item) {
+      item.classList.toggle('active');
+    }
+
+    function showModal() {
+      document.getElementById("password-modal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("password-modal").style.display = "none";
+    }
+
+    function checkPassword() {
+      const password = document.getElementById("moder-password").value;
+      if (password === "moder123") {
+        showSection('moder');
+        closeModal();
+      } else {
+        alert("Неправильний пароль!");
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="navbar">
+    <div class="menu">
+      <a href="#" onclick="showSection('main')"><span data-lang-key="mainTitle">Вільний простір</span></a>
+      <a href="#" onclick="showSection('faq')"><span data-lang-key="faqTitle">Питання та Відповіді</span></a>
+      <a href="#" onclick="showModal()"><span data-lang-key="moderTitle">MODER</span></a>
+    </div>
+    <div class="lang-buttons">
+      <button onclick="switchLanguage('uk')">Укр</button>
+      <button onclick="switchLanguage('en')">Eng</button>
+    </div>
+  </div>
+
+  <main id="main" class="content-section active">
+    <h1 data-lang-key="mainTitle">Вільний простір</h1>
+    <p>Ласкаво просимо до нашого спільного простору!</p>
+  </main>
+
+  <section id="faq" class="content-section">
+    <h2 data-lang-key="faqTitle">Питання та Відповіді</h2>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      Як отримати роль Ознайомлений?
+      <div class="faq-answer">Перейдіть в розділ "Правила" та натисніть "отримати роль".</div>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      Чи можна змінити мову інтерфейсу?
+      <div class="faq-answer">Натисніть одну з кнопок "Укр" або "Eng" у верхній частині сторінки.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      Як увійти в панель модератора?
+      <div class="faq-answer">Натисніть на кнопку "MODER" і введіть пароль, щоб отримати доступ.</div>
+    </div>
+  </section>
+
+  <section id="moder" class="content-section">
+  <h1 data-lang-key="moderTitle">MODER</h1>
+  <div class="moder-panel">
+    <ul>
+      <li>Елемент 1</li>
+      <li>Елемент 2</li>
+      <li>Елемент 3</li>
+    </ul>
+  </div
+</section>
+
+<!-- Модальне вікно -->
+<div id="password-modal" class="modal">
+  <input type="password" id="moder-password" placeholder="Введіть пароль">
+  <button onclick="checkPassword()">Увійти</button>
+  <button onclick="closeModal()">Закрити</button>
+</div>
+
